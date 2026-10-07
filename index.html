@@ -333,7 +333,7 @@
             </header>
             <div class="kartu" id="blok-kode">
                 <h3>Masukkan Kode Akses</h3>
-                <p style="font-size:14px;color:#6b7280;">Tanyakan kode kepada wali kelas</p>
+                <p style="font-size:14px;color:#6b7280;">Kode bawaan: <strong>petualang123</strong></p>
                 <input type="password" id="kode-masuk" placeholder="Kode akses...">
                 <button class="btn btn-ungu" onclick="cekKode()">🔓 Buka Laporan</button>
                 <p style="color:var(--merah);margin-top:8px;display:none;" id="kode-salah">Kode tidak cocok!</p>
@@ -384,7 +384,7 @@ const daftarSurahJuz30 = [
     {nomor:84, nama:'Al-Inshiqaq', ayat:25},
     {nomor:85, nama:'Al-Buruj', ayat:22},
     {nomor:86, nama:'At-Tariq', ayat:17},
-    {nomor:87, nama:'Al-A'la', ayat:19},
+    {nomor:87, nama:'Al-A\'la', ayat:19},
     {nomor:88, nama:'Al-Ghasyiyah', ayat:26},
     {nomor:89, nama:'Al-Fajr', ayat:30},
     {nomor:90, nama:'Al-Balad', ayat:20},
@@ -393,18 +393,18 @@ const daftarSurahJuz30 = [
     {nomor:93, nama:'Ad-Duha', ayat:11},
     {nomor:94, nama:'Asy-Syarh', ayat:8},
     {nomor:95, nama:'At-Tin', ayat:8},
-    {nomor:96, nama:'Al-'Alaq', ayat:19},
+    {nomor:96, nama:'Al-\'Alaq', ayat:19},
     {nomor:97, nama:'Al-Qadr', ayat:5},
     {nomor:98, nama:'Al-Bayyinah', ayat:8},
     {nomor:99, nama:'Az-Zalzalah', ayat:8},
-    {nomor:100, nama:'Al-'Adiyat', ayat:11},
-    {nomor:101, nama:'Al-Qari'ah', ayat:11},
+    {nomor:100, nama:'Al-\'Adiyat', ayat:11},
+    {nomor:101, nama:'Al-Qari\'ah', ayat:11},
     {nomor:102, nama:'At-Takasur', ayat:8},
-    {nomor:103, nama:'Al-'Ashr', ayat:3},
+    {nomor:103, nama:'Al-\'Ashr', ayat:3},
     {nomor:104, nama:'Al-Humazah', ayat:9},
     {nomor:105, nama:'Al-Fil', ayat:5},
     {nomor:106, nama:'Quraisy', ayat:4},
-    {nomor:107, nama:'Al-Ma'un', ayat:7},
+    {nomor:107, nama:'Al-Ma\'un', ayat:7},
     {nomor:108, nama:'Al-Kautsar', ayat:3},
     {nomor:109, nama:'Al-Kafirun', ayat:6},
     {nomor:110, nama:'An-Nasr', ayat:3},
@@ -518,10 +518,16 @@ function simpan() {
     localStorage.setItem('jelajahPrestasi', JSON.stringify(data));
 }
 function simpanIdentitas() {
-    data.nama = document.getElementById('nama').value.trim();
-    data.kelas = document.getElementById('kelas').value.trim();
-    if (!data.nama || !data.kelas) { alert('Isi nama & kelas dulu!'); return; }
-    simpan(); tampilSetelahIdentitas();
+    const namaInput = document.getElementById('nama').value.trim();
+    const kelasInput = document.getElementById('kelas').value.trim();
+    if (!namaInput || !kelasInput) { 
+        alert('Isi nama & kelas dulu ya!'); 
+        return; 
+    }
+    data.nama = namaInput;
+    data.kelas = kelasInput;
+    simpan(); 
+    tampilSetelahIdentitas();
 }
 function tampilSetelahIdentitas() {
     document.getElementById('blok-identitas').classList.add('sembunyi');
@@ -585,9 +591,9 @@ function gantiStatusSurah(idx) {
     data.hafalanQuran[idx].status = urutan[berikutnya];
     if (berikutnya !== 0) {
         data.hafalanQuran[idx].tanggal = new Date().toLocaleDateString('id-ID');
-        if (berikutnya === 1) data.bintang += 2; // Hafal = +2
-        if (berikutnya === 2) data.bintang += 1; // Lancar = +1
-        if (berikutnya === 3) data.bintang += 2; // Diuji = +2
+        if (berikutnya === 1) data.bintang += 2;
+        if (berikutnya === 2) data.bintang += 1;
+        if (berikutnya === 3) data.bintang += 2;
     } else {
         data.hafalanQuran[idx].tanggal = '';
     }
@@ -635,6 +641,7 @@ function bukaPulau(kunci) {
     document.getElementById('deskripsi-pulau').textContent = pulauAktif.deskripsi;
     document.getElementById('hal-utama').classList.add('sembunyi');
     document.getElementById('hal-pulau').classList.remove('sembunyi');
+    document.getElementById('progres-angka').textContent = `0/${pulauAktif.daftar.length}`;
     tampilSoal();
 }
 function tampilSoal() {
@@ -676,5 +683,4 @@ function jawab(dipilih, elemen, kunci, poin) {
 }
 function soalBerikutnya() {
     indeksSoal++;
-    if (indeksSoal < pulauAktif.daftar.length) {
-        tampilSoal();
+    if (indeksSoal < pul
