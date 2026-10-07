@@ -1,0 +1,680 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>🗺️ Jelajah Prestasi + 🕌 Hafal Juz 30</title>
+    <style>
+        * { margin: 0; padding: 0; box-sizing: border-box; font-family: 'Segoe UI', Roboto, 'Comic Sans MS', cursive, sans-serif; }
+        :root {
+            --biru: #1976d2; --hijau: #38b000; --kuning: #ffb703;
+            --ungu: #7b2cbf; --merah: #e63946; --oranye: #fb5607;
+            --hijau-quran: #2e7d32; --emas: #f59e0b;
+            --muda: #f0f9ff; --bayangan: 0 4px 20px rgba(0,0,0,0.08);
+        }
+        body {
+            background: linear-gradient(180deg, #e0f7fa 0%, #e8f5e9 40%, #fff8e1 100%);
+            min-height: 100vh; padding: 15px;
+        }
+        .container { max-width: 480px; margin: 0 auto; }
+        header {
+            background: white; padding: 20px; border-radius: 24px;
+            text-align: center; margin-bottom: 20px; box-shadow: var(--bayangan);
+            position: relative; overflow: hidden;
+        }
+        header::before {
+            content: ''; position: absolute; top: 0; left: 0; right: 0;
+            height: 6px; background: linear-gradient(90deg, var(--biru), var(--hijau), var(--kuning), var(--ungu), var(--hijau-quran));
+        }
+        h1 { font-size: 22px; color: #2d3748; }
+        h2 { font-size: 18px; margin-bottom: 12px; color: #2d3748; }
+        .sembunyi { display: none !important; }
+        .kembali {
+            background: #e2e8f0; border: none; padding: 10px 16px; border-radius: 12px;
+            font-size: 15px; cursor: pointer; margin-bottom: 15px; color: #2d3748;
+        }
+        .kartu {
+            background: white; padding: 22px; border-radius: 20px;
+            margin-bottom: 16px; box-shadow: var(--bayangan);
+        }
+        .salam {
+            background: linear-gradient(135deg, #e3f2fd, #e8f5e9);
+            padding: 16px; border-radius: 16px; margin-bottom: 16px;
+        }
+        .grid-pulau {
+            display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-bottom: 20px;
+        }
+        .pulau {
+            border: none; border-radius: 20px; padding: 20px 12px; cursor: pointer;
+            transition: all 0.3s; text-align: center; color: white; font-weight: bold;
+        }
+        .pulau:hover { transform: translateY(-4px); }
+        .pulau.mtk { background: linear-gradient(135deg, #ff9500, #ff5e00); }
+        .pulau.bhs { background: linear-gradient(135deg, #22c55e, #16a34a); }
+        .pulau.ipa { background: linear-gradient(135deg, #8b5cf6, #6d28d9); }
+        .pulau.ppkn { background: linear-gradient(135deg, #ef4444, #dc2626); }
+        .pulau.quran { background: linear-gradient(135deg, #2e7d32, #1b5e20); grid-column: span 2; }
+        .pulau.bintang { background: linear-gradient(135deg, #f59e0b, #d97706); grid-column: span 2; }
+        .ikon { font-size: 28px; margin-bottom: 6px; }
+        .tingkat { font-size: 12px; opacity: 0.9; margin-top: 4px; }
+        
+        .lencana-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 10px; }
+        .lencana {
+            width: 60px; height: 60px; border-radius: 50%; display: flex; align-items: center;
+            justify-content: center; font-size: 26px; background: #e2e8f0; margin: 0 auto;
+            transition: 0.3s;
+        }
+        .lencana.aktif { background: linear-gradient(135deg, #ffd60a, #ffc300); box-shadow: 0 0 12px rgba(255,215,0,0.4); }
+        .lencana.q { background: linear-gradient(135deg, #4caf50, #2e7d32); }
+        .lencana.terkunci { filter: grayscale(1); opacity: 0.5; }
+        
+        .bar-wrapper { background: #e2e8f0; border-radius: 10px; height: 14px; margin: 6px 0; overflow: hidden; }
+        .bar { height: 100%; border-radius: 10px; transition: width 0.6s ease-out; }
+        .bar-quran { background: linear-gradient(90deg, #4caf50, #2e7d32); }
+        
+        .btn {
+            width: 100%; border: none; padding: 14px; border-radius: 14px;
+            font-size: 16px; font-weight: bold; cursor: pointer; margin: 6px 0; transition: 0.2s;
+        }
+        .btn-biru { background: var(--biru); color: white; }
+        .btn-hijau { background: var(--hijau); color: white; }
+        .btn-quran { background: var(--hijau-quran); color: white; }
+        .btn-kuning { background: var(--kuning); color: #1a1a1a; }
+        .btn-ungu { background: var(--ungu); color: white; }
+        .btn-abu { background: #e2e8f0; color: #374151; }
+        .btn:hover { transform: scale(1.02); }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; transform: none; }
+        
+        input, textarea {
+            width: 100%; padding: 14px; border-radius: 12px; border: 2px solid #e2e8f0;
+            font-size: 16px; margin: 8px 0; transition: border 0.2s;
+        }
+        input:focus, textarea:focus { outline: none; border-color: var(--biru); }
+        
+        .pesan-kartu {
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            border-left: 4px solid var(--kuning); padding: 14px; border-radius: 12px;
+            margin-bottom: 12px; font-style: italic;
+        }
+        .misi-harian {
+            background: linear-gradient(135deg, #dbeafe, #bfdbfe);
+            padding: 16px; border-radius: 14px; border-left: 4px solid var(--biru);
+            margin-bottom: 16px;
+        }
+        .misi-quran {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            padding: 16px; border-radius: 14px; border-left: 4px solid var(--hijau-quran);
+            margin-bottom: 16px;
+        }
+        
+        .soal-kartu { font-size: 19px; font-weight: bold; margin: 16px 0; line-height: 1.6; }
+        .pilihan-btn {
+            width: 100%; text-align: left; padding: 14px 16px; margin: 8px 0;
+            border: 2px solid #e2e8f0; border-radius: 12px; background: white;
+            font-size: 16px; cursor: pointer; transition: 0.2s;
+        }
+        .pilihan-btn:hover { border-color: var(--biru); background: #eff6ff; }
+        .benar { border-color: var(--hijau); background: #f0fdf4 !important; }
+        .salah { border-color: var(--merah); background: #fef2f2 !important; }
+        .umpan { padding: 14px; border-radius: 12px; margin: 12px 0; display: none; font-weight: bold; }
+        .umpan.b { background: #f0fdf4; color: #166534; display: block; }
+        .umpan.s { background: #fef2f2; color: #991b1b; display: block; }
+        
+        .daftar-surah { max-height: 500px; overflow-y: auto; }
+        .item-surah {
+            display: flex; align-items: center; justify-content: space-between;
+            padding: 12px 10px; border-bottom: 1px dashed #ddd; gap: 8px;
+        }
+        .info-surah { flex: 1; }
+        .nama-surah { font-weight: bold; }
+        .ket-surah { font-size: 12px; color: #6b7280; }
+        .tombol-status {
+            border: none; border-radius: 8px; padding: 6px 10px; font-size: 12px; cursor: pointer; font-weight: bold;
+        }
+        .belum { background: #e5e7eb; color: #4b5563; }
+        .hafal { background: #bbf7d0; color: #166534; }
+        .lancar { background: #86efac; color: #14532d; }
+        .diuji { background: #fef08a; color: #854d0e; }
+        
+        .peringkat-kotak {
+            text-align: center; padding: 20px; border-radius: 16px;
+            background: linear-gradient(135deg, #fef3c7, #fde68a);
+            font-size: 18px; font-weight: bold; margin: 12px 0;
+        }
+        .peringkat-quran {
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            color: #1b5e20;
+        }
+        .peringkat-ikon { font-size: 40px; margin-bottom: 8px; }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- HALAMAN UTAMA -->
+        <div id="hal-utama">
+            <header>
+                <h1>🗺️ Jelajah Prestasi + 🕌 Hafal Juz 30</h1>
+                <p style="color:#6b7280;">Belajar, Berakhlak, & Menghafal Al-Qur'an ✨</p>
+            </header>
+
+            <div class="kartu" id="blok-identitas">
+                <h2>👤 Siapa Petualangnya?</h2>
+                <input type="text" id="nama" placeholder="Nama Lengkapmu">
+                <input type="text" id="kelas" placeholder="Kelas">
+                <button class="btn btn-biru" onclick="simpanIdentitas()">🚀 Mulai Petualangan!</button>
+            </div>
+
+            <div id="setelah-identitas" class="sembunyi">
+                <div class="salam">
+                    <h2>Halo, <span id="nama-sapa"></span>! 👋</h2>
+                    <p style="color:#4b5563;">Hari ini <span id="hari-ini"></span></p>
+                    <p style="margin-top:8px;font-weight:bold;">⭐ Bintang: <span id="total-bintang">0</span> | 🕌 Surah: <span id="jumlah-surah">0</span>/37</p>
+                </div>
+
+                <div class="misi-quran">
+                    <h3>📖 Target Hafalan Juz 30</h3>
+                    <p style="margin:8px 0;">Progres: <span id="progres-quran-angka">0%</span></p>
+                    <div class="bar-wrapper"><div class="bar bar-quran" id="bar-quran" style="width:0%;"></div></div>
+                    <button class="btn btn-quran" style="margin-top:10px;" onclick="bukaHalaman('quran')">📖 Buka Daftar Surah</button>
+                </div>
+
+                <div class="misi-harian">
+                    <h3>🎯 Misi Harian</h3>
+                    <p id="misi-teks" style="font-size:16px;margin:10px 0;"></p>
+                    <button class="btn btn-hijau" id="btn-misi" onclick="selesaikanMisi()">✅ Sudah Kubuat!</button>
+                </div>
+
+                <div class="kartu" id="blok-pesan-orangtua">
+                    <h3>💌 Pesan Penyemangat</h3>
+                    <div id="kotak-pesan-orangtua" style="color:#6b7280;">Semangat belajar & menghafal ya! Allah menyukai yang tekun! 🤲</div>
+                </div>
+
+                <h2 style="margin:20px 0 10px;">🗺️ Peta Ilmu</h2>
+                <div class="grid-pulau">
+                    <button class="pulau mtk" onclick="bukaPulau('mtk')">
+                        <div class="ikon">➕➖</div>
+                        Matematika
+                        <div class="tingkat" id="tingkat-mtk">Pantai Bilangan</div>
+                    </button>
+                    <button class="pulau bhs" onclick="bukaPulau('bhs')">
+                        <div class="ikon">📝</div>
+                        Bahasa
+                        <div class="tingkat" id="tingkat-bhs">Kampung Huruf</div>
+                    </button>
+                    <button class="pulau ipa" onclick="bukaPulau('ipa')">
+                        <div class="ikon">🌿</div>
+                        Alam
+                        <div class="tingkat" id="tingkat-ipa">Tepian Hutan</div>
+                    </button>
+                    <button class="pulau ppkn" onclick="bukaPulau('ppkn')">
+                        <div class="ikon">🇮🇩</div>
+                        Negeriku
+                        <div class="tingkat" id="tingkat-ppkn">Desa Pancasila</div>
+                    </button>
+                    <button class="pulau quran" onclick="bukaHalaman('quran')">
+                        <div class="ikon">📖</div>
+                        Juz 30 — Hafalan
+                        <div class="tingkat" id="tingkat-quran">Langkah Pertama</div>
+                    </button>
+                    <button class="pulau bintang" onclick="bukaHalaman('karakter')">
+                        <div class="ikon">⭐</div>
+                        Bintang Kebaikan
+                        <div class="tingkat" id="tingkat-karakter">Langkah Pertama</div>
+                    </button>
+                </div>
+
+                <div class="kartu" style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+                    <button class="btn btn-kuning" onclick="bukaHalaman('lencana')">🏅 Lencana</button>
+                    <button class="btn btn-ungu" onclick="bukaHalaman('laporan')">📊 Laporan</button>
+                </div>
+                <button class="btn btn-abu" onclick="bukaHalaman('pantau')">🔍 Halaman Orang Tua & Guru</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN JUZ 30 -->
+        <div id="hal-quran" class="sembunyi">
+            <button class="kembali" onclick="kembaliKeUtama()">← Kembali</button>
+            <header style="background:linear-gradient(135deg,#2e7d32,#1b5e20);color:white;">
+                <h1 style="color:white;">📖 Juz 30 — Hafalan</h1>
+                <p id="ringkasan-quran" style="opacity:0.9;">0 dari 37 surah selesai</p>
+            </header>
+            
+            <div class="kartu">
+                <p style="font-weight:bold;">📈 Progres Keseluruhan: <span id="progres-quran-persen">0%</span></p>
+                <div class="bar-wrapper" style="margin-bottom:20px;"><div class="bar bar-quran" id="bar-quran-besar" style="width:0%;"></div></div>
+                
+                <p style="font-size:13px;color:#6b7280;margin-bottom:10px;">
+                    Klik tombol untuk mengubah status: <span class="tombol-status belum">Belum</span> → 
+                    <span class="tombol-status hafal">Hafal</span> → <span class="tombol-status lancar">Lancar</span> → 
+                    <span class="tombol-status diuji">Diuji</span>
+                </p>
+                
+                <div class="daftar-surah" id="daftar-surah-quran"></div>
+            </div>
+        </div>
+
+        <!-- HALAMAN PULAU BELAJAR -->
+        <div id="hal-pulau" class="sembunyi">
+            <button class="kembali" onclick="kembaliKeUtama()">← Kembali ke Peta</button>
+            <header style="background:linear-gradient(135deg,var(--biru),var(--hijau));color:white;">
+                <h1 id="nama-pulau" style="color:white;"></h1>
+                <p id="deskripsi-pulau"></p>
+            </header>
+            <div class="kartu">
+                <div style="display:flex;justify-content:space-between;font-weight:bold;margin-bottom:8px;">
+                    <span>Progres</span>
+                    <span id="progres-angka">0/0</span>
+                </div>
+                <div class="bar-wrapper">
+                    <div class="bar" id="bar-progres" style="width:0%;background:var(--biru);"></div>
+                </div>
+            </div>
+            <div class="kartu">
+                <h3 id="label-materi">📖 Pelajaran</h3>
+                <div style="background:#f3f4f6;padding:16px;border-radius:12px;margin-bottom:16px;line-height:1.7;" id="kotak-materi"></div>
+                <h3>🎯 Tantangan</h3>
+                <div class="soal-kartu" id="kotak-soal"></div>
+                <div id="wadah-pilihan"></div>
+                <div class="umpan" id="umpan-balik"></div>
+                <button class="btn btn-biru" id="btn-lanjut" onclick="soalBerikutnya()" disabled>Lanjut ➡️</button>
+            </div>
+        </div>
+
+        <!-- HALAMAN LENCANA -->
+        <div id="hal-lencana" class="sembunyi">
+            <button class="kembali" onclick="kembaliKeUtama()">← Kembali</button>
+            <header>
+                <h1>🏅 Koleksi Lencana</h1>
+                <p>Lencana yang sudah kau raih! Keren! ✨</p>
+            </header>
+            <div class="kartu lencana-grid" id="daftar-lencana"></div>
+            <p style="text-align:center;margin-top:20px;color:#6b7280;">Selesaikan tantangan untuk membuka lencana berikutnya!</p>
+        </div>
+
+        <!-- HALAMAN LAPORAN -->
+        <div id="hal-laporan" class="sembunyi">
+            <button class="kembali" onclick="kembaliKeUtama()">← Kembali</button>
+            <header>
+                <h1>📊 Laporan Petualang</h1>
+            </header>
+            <div class="peringkat-kotak">
+                <div class="peringkat-ikon" id="ikon-peringkat">🌱</div>
+                Tingkat: <span id="nama-peringkat">Penjelajah Pemula</span>
+            </div>
+            <div class="peringkat-kotak peringkat-quran">
+                <div class="peringkat-ikon">🕌</div>
+                Hafalan Juz 30: <span id="nama-peringkat-quran">Baru Memulai</span><br>
+                <span style="font-size:14px;opacity:0.8;" id="detail-quran">0/37 surah</span>
+            </div>
+            <div class="kartu">
+                <h3>📈 Kemajuan Belajar</h3>
+                <p>Matematika</p>
+                <div class="bar-wrapper"><div class="bar" style="background:#ff9500;width:0%;" id="bar-mtk"></div></div>
+                <p>Bahasa Indonesia</p>
+                <div class="bar-wrapper"><div class="bar" style="background:#22c55e;width:0%;" id="bar-bhs"></div></div>
+                <p>IPA</p>
+                <div class="bar-wrapper"><div class="bar" style="background:#8b5cf6;width:0%;" id="bar-ipa"></div></div>
+                <p>PPKn</p>
+                <div class="bar-wrapper"><div class="bar" style="background:#ef4444;width:0%;" id="bar-ppkn"></div></div>
+                <p>Kebaikan</p>
+                <div class="bar-wrapper"><div class="bar" style="background:#f59e0b;width:0%;" id="bar-baik"></div></div>
+                <p>Juz 30</p>
+                <div class="bar-wrapper"><div class="bar bar-quran" style="width:0%;" id="bar-lap-quran"></div></div>
+            </div>
+            <button class="btn btn-biru" onclick="bagikanLaporan()">📤 Bagikan ke WhatsApp</button>
+        </div>
+
+        <!-- HALAMAN PEMANTAUAN ORTU/GURU -->
+        <div id="hal-pantau" class="sembunyi">
+            <button class="kembali" onclick="kembaliKeUtama()">← Kembali</button>
+            <header>
+                <h1>🔍 Ruang Pemantauan</h1>
+                <p style="font-size:14px;">Untuk Orang Tua & Guru</p>
+            </header>
+            <div class="kartu" id="blok-kode">
+                <h3>Masukkan Kode Akses</h3>
+                <p style="font-size:14px;color:#6b7280;">Tanyakan kode kepada wali kelas</p>
+                <input type="password" id="kode-masuk" placeholder="Kode akses...">
+                <button class="btn btn-ungu" onclick="cekKode()">🔓 Buka Laporan</button>
+                <p style="color:var(--merah);margin-top:8px;display:none;" id="kode-salah">Kode tidak cocok!</p>
+            </div>
+            <div id="isi-pantau" class="sembunyi">
+                <div class="kartu">
+                    <h3>📋 Data Ananda</h3>
+                    <p><strong>Nama:</strong> <span id="p-nama"></span></p>
+                    <p><strong>Kelas:</strong> <span id="p-kelas"></span></p>
+                    <p><strong>Terakhir Aktif:</strong> <span id="p-waktu"></span></p>
+                </div>
+                <div class="kartu">
+                    <h3>📊 Ringkasan</h3>
+                    <p>⭐ Bintang: <span id="p-bintang">0</span></p>
+                    <p>🕌 Juz 30: <span id="p-quran">0</span>/37 surah</p>
+                    <p>🏅 Lencana: <span id="p-lencana">0</span>/<span id="p-total-lencana">0</span></p>
+                    <p>📚 Soal diselesaikan: <span id="p-soal">0</span></p>
+                    <p>💚 Tindakan baik: <span id="p-baik">0</span></p>
+                    <p><strong>Tingkat:</strong> <span id="p-tingkat"></span></p>
+                </div>
+                <div class="kartu">
+                    <h3>📖 Progres Hafalan Juz 30</h3>
+                    <div id="p-daftar-quran"></div>
+                </div>
+                <div class="kartu">
+                    <h3>💌 Kirim Pesan Penyemangat</h3>
+                    <textarea id="pesan-untuk-anak" rows="3" placeholder="Semangat menghafal Al-Qur'an ya..."></textarea>
+                    <button class="btn btn-hijau" onclick="kirimPesan()">💬 Kirim Pesan</button>
+                    <p style="color:var(--hijau);margin-top:8px;display:none;" id="pesan-terkirim">✅ Terkirim!</p>
+                </div>
+                <button class="btn btn-abu" style="margin-top:20px;" onclick="mulaiPeriodeBaru()">🔄 Mulai Periode Baru</button>
+            </div>
+        </div>
+    </div>
+
+<script>
+// === KONFIGURASI ===
+const KODE_GURU = 'petualang123';
+
+// === DAFTAR SURAH JUZ 30 ===
+const daftarSurahJuz30 = [
+    {nomor:78, nama:'An-Naba', ayat:40},
+    {nomor:79, nama:'An-Naziat', ayat:46},
+    {nomor:80, nama:'Abasa', ayat:42},
+    {nomor:81, nama:'At-Takwir', ayat:29},
+    {nomor:82, nama:'Al-Infitar', ayat:19},
+    {nomor:83, nama:'Al-Mutaffifin', ayat:36},
+    {nomor:84, nama:'Al-Inshiqaq', ayat:25},
+    {nomor:85, nama:'Al-Buruj', ayat:22},
+    {nomor:86, nama:'At-Tariq', ayat:17},
+    {nomor:87, nama:'Al-A'la', ayat:19},
+    {nomor:88, nama:'Al-Ghasyiyah', ayat:26},
+    {nomor:89, nama:'Al-Fajr', ayat:30},
+    {nomor:90, nama:'Al-Balad', ayat:20},
+    {nomor:91, nama:'Asy-Syams', ayat:15},
+    {nomor:92, nama:'Al-Lail', ayat:21},
+    {nomor:93, nama:'Ad-Duha', ayat:11},
+    {nomor:94, nama:'Asy-Syarh', ayat:8},
+    {nomor:95, nama:'At-Tin', ayat:8},
+    {nomor:96, nama:'Al-'Alaq', ayat:19},
+    {nomor:97, nama:'Al-Qadr', ayat:5},
+    {nomor:98, nama:'Al-Bayyinah', ayat:8},
+    {nomor:99, nama:'Az-Zalzalah', ayat:8},
+    {nomor:100, nama:'Al-'Adiyat', ayat:11},
+    {nomor:101, nama:'Al-Qari'ah', ayat:11},
+    {nomor:102, nama:'At-Takasur', ayat:8},
+    {nomor:103, nama:'Al-'Ashr', ayat:3},
+    {nomor:104, nama:'Al-Humazah', ayat:9},
+    {nomor:105, nama:'Al-Fil', ayat:5},
+    {nomor:106, nama:'Quraisy', ayat:4},
+    {nomor:107, nama:'Al-Ma'un', ayat:7},
+    {nomor:108, nama:'Al-Kautsar', ayat:3},
+    {nomor:109, nama:'Al-Kafirun', ayat:6},
+    {nomor:110, nama:'An-Nasr', ayat:3},
+    {nomor:111, nama:'Al-Lahab', ayat:5},
+    {nomor:112, nama:'Al-Ikhlas', ayat:4},
+    {nomor:113, nama:'Al-Falaq', ayat:5},
+    {nomor:114, nama:'An-Nas', ayat:6}
+];
+
+// === BANK MATERI & SOAL ===
+const dataPulau = {
+    mtk: {
+        nama: '🏝️ Pulau Matematika',
+        deskripsi: 'Belajar bilangan, hitungan, & logika',
+        tingkatan: ['Pantai Bilangan', 'Teluk Penjumlahan', 'Tanjung Pengurangan', 'Puncak Perkalian'],
+        daftar: [
+            {materi:'<strong>Penjumlahan</strong><br>Contoh: 6 + 4 = 10', soal:'8 + 5 = ...', pilihan:['11','12','13','14'], jawaban:2, poin:1},
+            {materi:'<strong>Pengurangan</strong><br>Contoh: 10 - 3 = 7', soal:'14 - 6 = ...', pilihan:['6','7','8','9'], jawaban:2, poin:1},
+            {materi:'<strong>Bilangan Ratusan</strong><br>500 + 300 = 800', soal:'400 + 500 = ...', pilihan:['800','900','1000','950'], jawaban:1, poin:2}
+        ]
+    },
+    bhs: {
+        nama: '🏡 Negeri Bahasa',
+        deskripsi: 'Belajar berbicara, membaca, & menulis',
+        tingkatan: ['Kampung Huruf', 'Desa Kata', 'Kota Kalimat', 'Istana Cerita'],
+        daftar: [
+            {materi:'<strong>Huruf Kapital</strong><br>Pakai di awal kalimat & nama.', soal:'Penulisan yang benar...', pilihan:['budi ke bandung','Budi ke Bandung','Budi Ke Bandung','budi Ke Bandung'], jawaban:1, poin:1},
+            {materi:'<strong>Kata Tanya</strong><br>Siapa=orang, Di mana=tempat, Kapan=waktu', soal:'_____ kamu lahir?', pilihan:['Siapa','Di mana','Kapan','Apa'], jawaban:2, poin:2}
+        ]
+    },
+    ipa: {
+        nama: '🌳 Hutan Alam',
+        deskripsi: 'Mengenal makhluk hidup & lingkungan',
+        tingkatan: ['Tepian Hutan', 'Tumbuhan & Hewan', 'Bumi Kita', 'Angkasa Raya'],
+        daftar: [
+            {materi:'<strong>Bagian Tumbuhan</strong><br>Akar menyerap air', soal:'Menyerap air adalah...', pilihan:['Daun','Batang','Akar','Bunga'], jawaban:2, poin:1},
+            {materi:'<strong>Sumber Cahaya</strong><br>Matahari sumber terbesar', soal:'Sumber cahaya bumi...', pilihan:['Bulan','Lampu','Matahari','Bintang'], jawaban:2, poin:1}
+        ]
+    },
+    ppkn: {
+        nama: '🇮🇩 Bhinneka Negeriku',
+        deskripsi: 'Mencintai tanah air & hidup rukun',
+        tingkatan: ['Desa Pancasila', 'Kota Aturan', 'Bukit Persatuan', 'Puncak Harapan'],
+        daftar: [
+            {materi:'<strong>Sila ke-1</strong><br>Ketuhanan Yang Maha Esa', soal:'Sikap sesuai sila ke-1...', pilihan:['Berdoa','Saling menolong','Sopan','Bersatu'], jawaban:0, poin:1},
+            {materi:'<strong>Bhinneka Tunggal Ika</strong><br>Berbeda tetap satu', soal:'Semboyan Indonesia...', pilihan:['Maju Terus','Bhinneka Tunggal Ika','Satu Nusa','Bersatu Teguh'], jawaban:1, poin:2}
+        ]
+    },
+    karakter: {nama:'⭐ Bintang Kebaikan', deskripsi:'Membangun hati mulia', tingkatan:['Langkah Pertama','Penabur Kebaikan','Pelindung Sesama','Teladan Sekolah'], daftar:[]}
+};
+
+const daftarLencana = [
+    {id:'q1', ikon:'📖', nama:'Pembuka Al-Qur\'an', syarat:'Mulai hafalan surah pertama', cek: d => d.hafalanQuran.some(s => s.status !== 'belum')},
+    {id:'q2', ikon:'🌿', nama:'Tetap Berjalan', syarat:'5 surah dihafal', cek: d => d.hafalanQuran.filter(s => s.status === 'hafal' || s.status === 'lancar' || s.status === 'diuji').length >= 5},
+    {id:'q3', ikon:'🌳', nama:'Penghafal Muda', syarat:'15 surah dihafal', cek: d => d.hafalanQuran.filter(s => s.status !== 'belum').length >= 15},
+    {id:'q4', ikon:'✨', nama:'Hafalan Lancar', syarat:'10 surah lancar', cek: d => d.hafalanQuran.filter(s => s.status === 'lancar' || s.status === 'diuji').length >= 10},
+    {id:'q5', ikon:'🌟', nama:'Penghafal Juz 30', syarat:'Semua surah selesai diuji', cek: d => d.hafalanQuran.every(s => s.status === 'diuji')},
+    {id:'bintang1', ikon:'⭐', nama:'Langkah Pertama', syarat:'Misi pertama', cek: d => d.kebaikan.length >= 1},
+    {id:'bintang2', ikon:'💡', nama:'Pembelajar', syarat:'3 soal benar', cek: d => d.totalBenar >= 3},
+    {id:'bintang3', ikon:'💚', nama:'Penyayang', syarat:'5 tindakan baik', cek: d => d.kebaikan.length >= 5},
+    {id:'bintang4', ikon:'🏆', nama:'Teladan', syarat:'15 tindakan baik', cek: d => d.kebaikan.length >= 15},
+    {id:'bintang5', ikon:'👑', nama:'Teladan Utama', syarat:'Semua lencana lain', cek: d => d.lencana.length >= 9}
+];
+
+const misiHarian = [
+    "Sapa orang tua dengan senyum pagi ini 😊",
+    "Rapikan tempat tidur sendiri 🛏️",
+    "Ucapkan terima kasih 🙏",
+    "Buang sampah pada tempatnya 🗑️",
+    "Berdoa sebelum & sesudah belajar 🤲",
+    "Dengarkan nasihat dengan baik 👂",
+    "Hafal 1 baris/satu ayat Al-Qur'an 📖",
+    "Membantu pekerjaan rumah 🏠",
+    "Berbicara sopan kepada orang tua 💬",
+    "Membaca Al-Qur'an walau sebentar 🕌"
+];
+
+// === DATA PENYIMPANAN ===
+let data = {
+    nama:'', kelas:'', bintang:0,
+    skorPulau:{mtk:0,bhs:0,ipa:0,ppkn:0},
+    totalSoalPulau:{mtk:0,bhs:0,ipa:0,ppkn:0},
+    totalBenar:0,
+    kebaikan:[],
+    lencana:[],
+    misiSelesai:{},
+    pesanOrtu:'',
+    waktuUpdate:'',
+    hafalanQuran: daftarSurahJuz30.map(s => ({nomor:s.nomor, nama:s.nama, status:'belum', tanggal:''}))
+};
+
+// === INISIALISASI ===
+function muatData() {
+    const simpan = localStorage.getItem('jelajahPrestasi');
+    if (simpan) {
+        data = JSON.parse(simpan);
+        // Tambah surah baru jika belum ada
+        daftarSurahJuz30.forEach(s => {
+            if (!data.hafalanQuran.find(x => x.nomor === s.nomor)) {
+                data.hafalanQuran.push({nomor:s.nomor, nama:s.nama, status:'belum', tanggal:''});
+            }
+        });
+        data.hafalanQuran.sort((a,b) => a.nomor - b.nomor);
+        if (data.nama) tampilSetelahIdentitas();
+    }
+    document.getElementById('hari-ini').textContent = new Date().toLocaleDateString('id-ID', {weekday:'long', day:'numeric', month:'long'});
+    pilihMisiHarian();
+}
+function simpan() {
+    data.waktuUpdate = new Date().toLocaleString('id-ID');
+    localStorage.setItem('jelajahPrestasi', JSON.stringify(data));
+}
+function simpanIdentitas() {
+    data.nama = document.getElementById('nama').value.trim();
+    data.kelas = document.getElementById('kelas').value.trim();
+    if (!data.nama || !data.kelas) { alert('Isi nama & kelas dulu!'); return; }
+    simpan(); tampilSetelahIdentitas();
+}
+function tampilSetelahIdentitas() {
+    document.getElementById('blok-identitas').classList.add('sembunyi');
+    document.getElementById('setelah-identitas').classList.remove('sembunyi');
+    document.getElementById('nama-sapa').textContent = data.nama;
+    perbaruiStatistik();
+    perbaruiPesanOrtu();
+}
+function kembaliKeUtama() {
+    document.querySelectorAll('[id^="hal-"]').forEach(h => h.classList.add('sembunyi'));
+    document.getElementById('hal-utama').classList.remove('sembunyi');
+    perbaruiStatistik();
+}
+function bukaHalaman(nama) {
+    document.querySelectorAll('[id^="hal-"]').forEach(h => h.classList.add('sembunyi'));
+    document.getElementById('hal-' + nama).classList.remove('sembunyi');
+    if (nama === 'lencana') tampilLencana();
+    if (nama === 'laporan') tampilLaporan();
+    if (nama === 'quran') tampilDaftarSurah();
+    if (nama === 'pantau') {
+        document.getElementById('blok-kode').classList.remove('sembunyi');
+        document.getElementById('isi-pantau').classList.add('sembunyi');
+        document.getElementById('kode-masuk').value = '';
+    }
+}
+
+// === JUZ 30 — HAFALAN ===
+function tampilDaftarSurah() {
+    const wadah = document.getElementById('daftar-surah-quran');
+    wadah.innerHTML = '';
+    let selesai = 0, lancar = 0, diuji = 0;
+    data.hafalanQuran.forEach((surah, idx) => {
+        if (surah.status !== 'belum') selesai++;
+        if (surah.status === 'lancar') lancar++;
+        if (surah.status === 'diuji') diuji++;
+        const kelasBtn = {
+            belum: 'belum', hafal: 'hafal', lancar: 'lancar', diuji: 'diuji'
+        }[surah.status];
+        wadah.innerHTML += `
+        <div class="item-surah">
+            <div class="info-surah">
+                <div class="nama-surah">${surah.nomor}. ${surah.nama}</div>
+                <div class="ket-surah">${surah.tanggal || 'Belum dimulai'}</div>
+            </div>
+            <button class="tombol-status ${kelasBtn}" onclick="gantiStatusSurah(${idx})">
+                ${surah.status === 'belum' ? 'Belum' : surah.status === 'hafal' ? 'Hafal' : surah.status === 'lancar' ? 'Lancar' : 'Diuji'}
+            </button>
+        </div>`;
+    });
+    const persen = Math.round((selesai / 37) * 100);
+    document.getElementById('ringkasan-quran').textContent = `${selesai} dari 37 surah selesai`;
+    document.getElementById('progres-quran-persen').textContent = `${persen}%`;
+    document.getElementById('bar-quran-besar').style.width = `${persen}%`;
+    cekLencana();
+}
+function gantiStatusSurah(idx) {
+    const urutan = ['belum', 'hafal', 'lancar', 'diuji'];
+    const sekarang = data.hafalanQuran[idx].status;
+    const posisi = urutan.indexOf(sekarang);
+    const berikutnya = (posisi + 1) % urutan.length;
+    data.hafalanQuran[idx].status = urutan[berikutnya];
+    if (berikutnya !== 0) {
+        data.hafalanQuran[idx].tanggal = new Date().toLocaleDateString('id-ID');
+        if (berikutnya === 1) data.bintang += 2; // Hafal = +2
+        if (berikutnya === 2) data.bintang += 1; // Lancar = +1
+        if (berikutnya === 3) data.bintang += 2; // Diuji = +2
+    } else {
+        data.hafalanQuran[idx].tanggal = '';
+    }
+    simpan();
+    tampilDaftarSurah();
+    perbaruiStatistik();
+}
+
+// === MISI HARIAN ===
+function pilihMisiHarian() {
+    const hari = new Date().toLocaleDateString('id-ID');
+    const idx = hari.split('').reduce((a,c) => a + c.charCodeAt(0), 0) % misiHarian.length;
+    document.getElementById('misi-teks').textContent = misiHarian[idx];
+    const sudah = data.misiSelesai[hari];
+    if (sudah) {
+        document.getElementById('btn-misi').textContent = '✅ Sudah Selesai!';
+        document.getElementById('btn-misi').disabled = true;
+    } else {
+        document.getElementById('btn-misi').textContent = '✅ Sudah Kubuat!';
+        document.getElementById('btn-misi').disabled = false;
+    }
+}
+function selesaikanMisi() {
+    const hari = new Date().toLocaleDateString('id-ID');
+    data.misiSelesai[hari] = true;
+    data.bintang += 1;
+    data.kebaikan.unshift(`Misi: ${misiHarian[Math.floor(Math.random() * misiHarian.length)]}`);
+    cekLencana();
+    simpan();
+    pilihMisiHarian();
+    perbaruiStatistik();
+    alert('🎉 Hebat! +1 ⭐');
+}
+
+// === PULAU BELAJAR ===
+let pulauAktif = null, indeksSoal = 0, skorSesi = 0;
+function bukaPulau(kunci) {
+    if (kunci === 'karakter') {
+        alert('Lihat Misi Harian & Laporan Kebaikan di halaman utama! 💚');
+        return;
+    }
+    pulauAktif = dataPulau[kunci];
+    indeksSoal = 0; skorSesi = 0;
+    document.getElementById('nama-pulau').textContent = pulauAktif.nama;
+    document.getElementById('deskripsi-pulau').textContent = pulauAktif.deskripsi;
+    document.getElementById('hal-utama').classList.add('sembunyi');
+    document.getElementById('hal-pulau').classList.remove('sembunyi');
+    tampilSoal();
+}
+function tampilSoal() {
+    const soal = pulauAktif.daftar[indeksSoal];
+    document.getElementById('kotak-materi').innerHTML = soal.materi;
+    document.getElementById('kotak-soal').textContent = `${indeksSoal+1}. ${soal.soal}`;
+    document.getElementById('umpan-balik').className = 'umpan';
+    document.getElementById('btn-lanjut').disabled = true;
+    document.getElementById('progres-angka').textContent = `${indeksSoal+1}/${pulauAktif.daftar.length}`;
+    document.getElementById('bar-progres').style.width = `${((indeksSoal+1)/pulauAktif.daftar.length)*100}%`;
+    
+    const wadah = document.getElementById('wadah-pilihan');
+    wadah.innerHTML = '';
+    soal.pilihan.forEach((teks, i) => {
+        const btn = document.createElement('button');
+        btn.className = 'pilihan-btn';
+        btn.textContent = `${String.fromCharCode(65+i)}. ${teks}`;
+        btn.onclick = () => jawab(i, btn, soal.jawaban, soal.poin);
+        wadah.appendChild(btn);
+    });
+}
+function jawab(dipilih, elemen, kunci, poin) {
+    const semua = document.querySelectorAll('.pilihan-btn');
+    semua.forEach(b => b.disabled = true);
+    if (dipilih === kunci) {
+        elemen.classList.add('benar');
+        skorSesi += poin;
+        data.totalBenar += 1;
+        data.bintang += 1;
+        document.getElementById('umpan-balik').className = 'umpan b';
+        document.getElementById('umpan-balik').textContent = '✅ BENAR! +1 ⭐';
+    } else {
+        elemen.classList.add('salah');
+        semua[kunci].classList.add('benar');
+        document.getElementById('umpan-balik').className = 'umpan s';
+        document.getElementById('umpan-balik').textContent = '❌ Tetap semangat!';
+    }
+    document.getElementById('btn-lanjut').disabled = false;
+}
+function soalBerikutnya() {
+    indeksSoal++;
+    if (indeksSoal < pulauAktif.daftar.length) {
+        tampilSoal();
